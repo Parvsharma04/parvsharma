@@ -1,22 +1,24 @@
 import { Calendar, GraduationCap } from "lucide-react";
 
 export default function Education() {
+  const education = [
+    {
+      degree: "Bachelor of Science in Software Engineering",
+      school: "Chitkara University",
+      year: "2022 - Present",
+    },
+    {
+      degree: "High School",
+      school: "GMSSS, Chandigarh",
+      year: "2020 - 2022",
+    },
+  ];
+
   return (
     <section className="mb-12">
       <h2 className="text-xl font-semibold mb-4">Education</h2>
       <div className="space-y-6">
-        {[
-          {
-            degree: "Master of Science in Computer Science",
-            school: "Tech University",
-            year: "2018 - 2020",
-          },
-          {
-            degree: "Bachelor of Science in Software Engineering",
-            school: "State University",
-            year: "2014 - 2018",
-          },
-        ].map((edu, index) => (
+        {education.map((edu, index) => (
           <div
             key={index}
             className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"

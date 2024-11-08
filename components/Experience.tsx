@@ -1,42 +1,41 @@
 import { Calendar, CheckCircle } from "lucide-react";
 
 export default function Experience() {
+  const experience = [
+    {
+      title: "Founder",
+      company: "TaskBounty",
+      period: "Sep'24 - Present",
+      achievements: [
+        "Led a team of developers and designers to build and deliver a high-quality web application",
+        "Laid out designs and collaborated with the design team to create pixel-perfect, user-friendly UIs",
+        "Conducted regular project meetings to align team objectives, ensuring timely project milestones",
+        "Won multiple pitch presentations at hackathons, gaining recognition for innovative project ideas",
+        "Built and shipped a full-stack web app with Next.js, Node.js, and PostgreSQL",
+        "Maintained clear documentation and streamlined onboarding processes for new team members",
+      ],
+    },
+    {
+      title: "Vice President",
+      company: "Computer Society of India",
+      period: "Aug'23 - Jun'24",
+      achievements: [
+        "Organized a series of coding competitions with 500+ participants.",
+        "Conducted orientation sessions for over 200 new members, introducing them to the society's initiatives",
+        "Led multiple bootcamps on web development, attended by 100+ students",
+        "Coordinated monthly tech meetups, focusing on trending topics like AI, blockchain, and cloud computing",
+        "Initiated a mentorship program connecting junior members with industry professionals",
+        "Managed logistics and promotion for a cybersecurity workshop attended by 200+ participants",
+        "Spearheaded a week-long coding bootcamp on competitive programming, enhancing members' coding skills",
+      ],
+    },
+  ];
+
   return (
     <section className="mb-12">
       <h2 className="text-xl font-semibold mb-4">Experience</h2>
       <div className="space-y-6">
-        {[
-          {
-            title: "Senior Developer",
-            company: "Tech Corp",
-            period: "2020 - Present",
-            achievements: [
-              "Led a team of 5 developers in creating a high-performance web application",
-              "Implemented CI/CD pipeline, reducing deployment time by 40%",
-              "Mentored junior developers, improving team productivity by 25%",
-            ],
-          },
-          {
-            title: "Web Developer",
-            company: "Digital Agency",
-            period: "2018 - 2020",
-            achievements: [
-              "Developed responsive websites for 20+ clients using React and Node.js",
-              "Optimized website performance, improving load times by an average of 30%",
-              "Collaborated with design team to implement pixel-perfect UIs",
-            ],
-          },
-          {
-            title: "Junior Developer",
-            company: "Startup Inc",
-            period: "2016 - 2018",
-            achievements: [
-              "Assisted in the development of a mobile app with 100k+ downloads",
-              "Implemented unit testing, increasing code coverage from 40% to 80%",
-              "Contributed to the company's open-source projects on GitHub",
-            ],
-          },
-        ].map((job, index) => (
+        {experience.map((job, index) => (
           <div
             key={index}
             className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"

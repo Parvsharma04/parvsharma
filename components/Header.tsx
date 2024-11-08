@@ -5,9 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 export default function Header() {
-  const [darkMode, setDarkMode] = useState(() =>
-    typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches
-  );
+  const [darkMode, setDarkMode] = useState(true);
 
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
@@ -30,10 +28,13 @@ export default function Header() {
           width={80}
           height={80}
           className="rounded-full"
+          unoptimized
         />
         <div className="flex flex-col space-y-1">
           <h1 className="text-2xl font-bold">Parv Sharma</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400">Full Stack Developer</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Full Stack Developer
+          </p>
         </div>
       </div>
       <Button variant="ghost" onClick={toggleDarkMode}>
