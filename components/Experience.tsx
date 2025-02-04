@@ -3,6 +3,17 @@ import { Calendar, CheckCircle } from "lucide-react";
 export default function Experience() {
   const experience = [
     {
+      title: "Full Stack Engineer Intern",
+      company: "FuriousWarrior",
+      period: "Nov'24 - Jan'25",
+      achievements: [
+        "Built a resillient infrastructure for the company's web application and which led to huge traffic increase",
+        "Laid out designs and collaborated with the design team to create pixel-perfect, user-friendly UIs",
+        "Maintained clear documentation and streamlined onboarding processes for new team members",
+        "Built a CI/CD pipeline for smooth operation.",
+      ],
+    },
+    {
       title: "Founder",
       company: "TaskBounty",
       period: "Sep'24 - Present",
