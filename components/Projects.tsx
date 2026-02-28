@@ -1,5 +1,13 @@
 const projects = [
   {
+    name: "util.dev",
+    url: "https://util-dev.vercel.app",
+    github: "https://github.com/Parvsharma04/util.dev",
+    tags: ["Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui"],
+    description:
+      "A developer-first utility hub with 38 essential tools — JSON formatter, JWT decoder, regex tester, cURL converter, and more. Fast, minimal, and offline-capable.",
+  },
+  {
     name: "TaskBounty",
     url: "https://taskbounty.in",
     github: "https://github.com/Parvsharma04/TaskBounty",
