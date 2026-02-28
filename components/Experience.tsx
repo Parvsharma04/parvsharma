@@ -1,69 +1,68 @@
-import { Calendar, CheckCircle } from "lucide-react";
+const experience = [
+  {
+    company: "Bajaj Finserv Health",
+    companyUrl: "https://bajajfinservhealth.in",
+    location: "Pune",
+    title: "Full Stack Developer Intern",
+    badge: "PPO",
+    period: "May'25 – Present",
+    active: true,
+    bullets: [
+      "Developed a fast analytics SaaS, resulting in significant revenue growth.",
+      "Built a GenAI chatbot to handle appointment queries, reducing support costs.",
+      "Optimized event processing for smoother, error-free workflows.",
+      "Contributed to partner integrations with direct business impact.",
+    ],
+  },
+  {
+    company: "Furious Warrior",
+    companyUrl: "https://furiouswarrior.com",
+    location: "Remote",
+    title: "Full Stack Developer Intern",
+    badge: null,
+    period: "Nov'24 – Jan'25",
+    active: false,
+    bullets: [
+      "Collaborated on building infrastructure from the ground up.",
+      "Designed and implemented CI/CD pipelines, deployed using AWS.",
+      "Boosted business by 160%, contributing to increased revenue.",
+      "Maintained a clean, readable, and well-structured codebase.",
+    ],
+  },
+];
 
 export default function Experience() {
-  const experience = [
-    {
-      title: "Full Stack Engineer Intern",
-      company: "FuriousWarrior",
-      period: "Nov'24 - Jan'25",
-      achievements: [
-        "Built a resillient infrastructure for the company's web application and which led to huge traffic increase",
-        "Laid out designs and collaborated with the design team to create pixel-perfect, user-friendly UIs",
-        "Maintained clear documentation and streamlined onboarding processes for new team members",
-        "Built a CI/CD pipeline for smooth operation.",
-      ],
-    },
-    {
-      title: "Founder",
-      company: "TaskBounty",
-      period: "Sep'24 - Present",
-      achievements: [
-        "Led a team of developers and designers to build and deliver a high-quality web application",
-        "Laid out designs and collaborated with the design team to create pixel-perfect, user-friendly UIs",
-        "Conducted regular project meetings to align team objectives, ensuring timely project milestones",
-        "Won multiple pitch presentations at hackathons, gaining recognition for innovative project ideas",
-        "Built and shipped a full-stack web app with Next.js, Node.js, and PostgreSQL",
-        "Maintained clear documentation and streamlined onboarding processes for new team members",
-      ],
-    },
-    {
-      title: "Vice President",
-      company: "Computer Society of India",
-      period: "Aug'23 - Jun'24",
-      achievements: [
-        "Organized a series of coding competitions with 500+ participants.",
-        "Conducted orientation sessions for over 200 new members, introducing them to the society's initiatives",
-        "Led multiple bootcamps on web development, attended by 100+ students",
-        "Coordinated monthly tech meetups, focusing on trending topics like AI, blockchain, and cloud computing",
-        "Initiated a mentorship program connecting junior members with industry professionals",
-        "Managed logistics and promotion for a cybersecurity workshop attended by 200+ participants",
-        "Spearheaded a week-long coding bootcamp on competitive programming, enhancing members' coding skills",
-      ],
-    },
-  ];
-
   return (
-    <section className="mb-12">
-      <h2 className="text-xl font-semibold mb-4">Experience</h2>
-      <div className="space-y-6">
-        {experience.map((job, index) => (
-          <div
-            key={index}
-            className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
-          >
-            <h3 className="font-medium text-lg mb-2">{job.title}</h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-2">
-              {job.company}
-            </p>
-            <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-3">
-              <Calendar className="mr-2 h-4 w-4" />
-              {job.period}
+    <section className="mb-8">
+      <p className="section-label uppercase tracking-wider text-green-400 mb-4 flex items-center gap-2 before:content-['//'] before:opacity-50">
+        experience
+      </p>
+      <div>
+        {experience.map((job, i) => (
+          <div key={i} className="mb-7">
+            <div className="flex flex-wrap items-baseline gap-2">
+              <a
+                href={job.companyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-100 font-bold text-base"
+              >
+                {job.company}
+              </a>
+              <span className="dim text-sm">— {job.location}</span>
+              {job.badge && (
+                <span className={`tag ${job.active ? "active" : ""}`}>{job.badge}</span>
+              )}
             </div>
-            <ul className="list-none space-y-2">
-              {job.achievements.map((achievement, i) => (
-                <li key={i} className="flex items-start">
-                  <CheckCircle className="mr-2 h-4 w-4 mt-1 flex-shrink-0 text-green-500" />
-                  <span className="text-sm">{achievement}</span>
+            <p className="text-sm text-gray-500 mt-1">
+              {job.title}
+              <span className="mx-2 text-gray-600">·</span>
+              <span className={job.active ? "text-green-400" : "text-gray-500"}>{job.period}</span>
+            </p>
+            <ul className="pl-4 mt-2 space-y-1">
+              {job.bullets.map((b, j) => (
+                <li key={j} className="text-sm text-gray-400 flex items-start">
+                  <span className="mr-1 text-gray-600">▸</span>{b}
                 </li>
               ))}
             </ul>

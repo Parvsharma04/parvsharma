@@ -1,34 +1,26 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-mono",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Parv Sharma",
   description:
-    "Hello there! 👋 I am Parv, a dedicated and ambitious Computer Science and Engineering student currently pursuing my undergraduate degree. My journey in the world of technology is driven by an insatiable curiosity and a deep passion for creating innovative solutions.",
+    "Full Stack Developer — TypeScript, React, NestJS. Building at Bajaj Finserv Health.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="en" className={mono.variable}>
+      <body style={{ fontFamily: "var(--font-mono), 'Courier New', monospace" }}>
         {children}
       </body>
     </html>
