@@ -37,7 +37,7 @@ export default function PostPage({ params }: { params: { slug: string } }) {
                         if (line.startsWith("## ")) {
                             return (
                                 <h2 key={i} style={{ fontWeight: "bold", color: "#00ff88", marginTop: "1.8rem", marginBottom: "0.6rem", fontSize: "0.82rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
-                  // {line.slice(3)}
+                                    {"// "} {line.slice(3)}
                                 </h2>
                             );
                         }
