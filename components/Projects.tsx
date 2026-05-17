@@ -1,5 +1,13 @@
 const projects = [
   {
+    name: "You & I",
+    url: "https://youandi.parvsharma.in",
+    github: "https://github.com/Parvsharma04/him-her",
+    tags: ["Next.js", "NestJS", "WebSockets", "Prisma", "PostgreSQL"],
+    description:
+      "A real-time, two-player compatibility engine. Features low-latency state synchronization, dynamic AI analysis orchestration via Google Gemini/Groq, and client-side canvas card generation.",
+  },
+  {
     name: "util.dev",
     url: "https://util-dev.vercel.app",
     github: "https://github.com/Parvsharma04/util.dev",
