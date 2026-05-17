@@ -12,7 +12,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const { slug } = await params;
     const post = getPostBySlug(slug);
     if (!post) return { title: "Not Found" };
-    return { title: `${post.title} — Parv Sharma` };
+    return {
+        title: post.title,
+        description: post.excerpt || "Engineering, systems, and thoughts by Parv Sharma",
+        openGraph: {
+            title: `${post.title} — Parv Sharma`,
+            description: post.excerpt || "Engineering, systems, and thoughts by Parv Sharma",
+            type: "article",
+            url: `https://parvsharma.in/blog/${slug}`,
+            publishedTime: post.date,
+        },
+        twitter: {
+            card: "summary_large_image",
+            title: `${post.title} — Parv Sharma`,
+            description: post.excerpt || "Engineering, systems, and thoughts by Parv Sharma",
+        }
+    };
 }
 
 export default async function PostPage({ params }: { params: Promise<{ slug: string }> }) {
