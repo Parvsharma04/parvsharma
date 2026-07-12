@@ -8,6 +8,76 @@ export interface Post {
 
 export const posts: Post[] = [
     {
+        slug: "how-pnpm-saved-my-drive",
+        title: "How pnpm saved my drive",
+        date: "2026-07-12",
+        excerpt:
+            "I discovered why \'node_modules\' were multiplying across projects and how pnpm's cache model changed everything.",
+        content: `
+I was moving my projects to my Arch drive and my machine started crawling. Memory spiked, copy processes stalled, and disk usage ballooned. I discovered the obvious-but-ugly truth: every project had its own full copy of node_modules. Millions of files, duplicated across folders.
+
+Then the eureka: what if my machine kept a single cache of packages and projects just referenced that? That thought led me to pnpm — and I was honestly shocked at how neat the internals are.
+
+## The problem, in plain terms
+
+npm and yarn historically duplicate packages per-project. If you have 50 projects using lodash@4.17.21, you get 50 copies. That's a lot of wasted space and slow installs when copying or working with many repos locally.
+
+I wanted a local cache that:
+- stores packages once
+- reuses them across projects
+- keeps installs deterministic and fast
+
+## What pnpm does differently
+
+pnpm uses a content-addressable global store and a clever node_modules layout:
+
+- Packages are unpacked into a central store (by content hash).
+- Each project gets a tiny node_modules that contains symlinks (and/or hard links) to the real files in the store, plus a .pnpm directory that maps package versions and dependency graphs.
+- The layout avoids deep duplication: files live once on disk, referenced from many projects.
+
+That means moving or cloning projects doesn't copy megabytes of identical files; the OS just points to the same data blocks. Disk usage drops dramatically.
+
+## Quick dive into pnpm internals 
+
+- Content-addressable store: packages are stored by a hash derived from the package tarball. If two packages are identical, they map to the same store entry.
+
+- Virtual store and node_modules layout: pnpm installs packages into a virtual store under the project (commonly node_modules/.pnpm), and exposes flattened access via symlinks in node_modules so Node's resolver still works. The real package code remains in the global store, not duplicated per-project.
+
+- Hard-links / symlinks: pnpm uses hard links when possible (which are very space efficient since they point multiple directory entries to the same inode) and symlinks where needed. Hard links mean the kernel doesn't duplicate file data.
+
+- Strictness & determinism: pnpm enforces a strict dependency tree. If a package expects a dependency that isn\'t explicitly declared, pnpm won\'t silently hoist it. That reduces "it works on my machine" surprises.
+
+- Store per Node version / compatibility: pnpm maintains different store states for varying Node versions/architectures when needed. The store includes metadata about the environment and package build artifacts so incompatible builds don\'t get reused incorrectly.
+
+## Why it felt like magic
+
+From a developer perspective:
+- Repeated installs become much faster because packages are fetched once and cached.
+- Cloning or moving projects is cheaper because node_modules references the global store rather than duplicating files.
+- Disk usage drops dramatically, especially when you work on many projects with overlapping deps.
+
+For me, seeing my drive go from multiple gigabytes of repeated files to a compact store was genuinely surprising.
+
+## When to pick pnpm
+
+- You juggle many projects on the same machine and see duplicated node_modules.
+- You want stricter dependency guarantees (fewer hidden hoists).
+- You care about disk and install performance without changing how Node resolves modules.
+
+## Caveats and practical tips
+
+- Some native packages that run postinstall builds can produce artifacts sensitive to Node version or OS. pnpm\'s store metadata helps, but occasionally you may need to rebuild per-project.
+- If a project expects hoisted packages implicitly, pnpm\'s strictness will surface missing declarations. This is good — it forces correct manifests — but expect small fixes in older projects.
+- Use pnpm\'s \`pnpm store prune\` and \`pnpm store path\` commands to inspect and clean up the store.
+
+## Final note — why I felt legitimately excited
+
+This started as a small, selfish wish: save time and disk when moving projects between drives. The solution turned out to be elegantly engineered: pnpm applies content-addressable storage, kernel-level file reuse, and a predictable node_modules layout to solve a mundane but painful problem. It\'s the kind of simple engineering trick that feels obvious in hindsight and delightful in practice.
+
+If you\'re dealing with multiple JS projects on one machine, give pnpm a try. It felt like a tiny systems-level victory — and my drive is still thanking me.
+        `.trim(),
+    },
+    {
         slug: "why-i-love-typescript",
         title: "Why I Love TypeScript",
         date: "2026-02-20",
