@@ -17,23 +17,23 @@ const books = [
   },
 ];
 
-interface MediaItem {
-  id: string;
-  title: string;
-  type: "movie" | "show";
-  link: string;
-  note?: string;
-}
+// interface MediaItem {
+//   id: string;
+//   title: string;
+//   type: "movie" | "show";
+//   link: string;
+//   note?: string;
+// }
 
-const media: MediaItem[] = [
-  // {
-  //   id: "media-1",
-  //   title: "Interstellar",
-  //   type: "movie",
-  //   link: "https://www.imdb.com/title/tt0816692/",
-  //   note: "Christopher Nolan's masterpiece on time, love, and survival.",
-  // },
-];
+// const media: MediaItem[] = [
+//   {
+//     id: "media-1",
+//     title: "Interstellar",
+//     type: "movie",
+//     link: "https://www.imdb.com/title/tt0816692/",
+//     note: "Christopher Nolan's masterpiece on time, love, and survival.",
+//   },
+// ];
 
 export function MiscSection() {
   return (
