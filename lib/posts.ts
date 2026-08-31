@@ -8,6 +8,72 @@ export interface Post {
 
 export const posts: Post[] = [
     {
+        slug: "my-pr-ritual",
+        title: "My PR Ritual",
+        date: "2026-08-31",
+        excerpt:
+            "A short checklist I run through before any branch of mine becomes a PR. Long, but it's saved me more than once.",
+        content: `
+People sometimes ask why my branch-to-merge process has so many steps. Short answer: every step exists because skipping it has bitten me before. Here's the ritual, in order.
+
+## 1. Checkout the right base branch
+
+I checkout from \`master\` or \`release\`, depending on where the change actually needs to land. Branch name follows \`ps/[itemId]/{2-word-brief}\`, e.g. \`ps/1234/slot-ranking\`. Consistent naming makes it obvious what a branch is for, months later.
+
+## 2. Finish the feature
+
+Write the code. No shortcuts here, just build the thing.
+
+## 3. Merge latest master/release into the branch
+
+Before doing anything else, I merge \`origin/master\` (or \`origin/release\`) into my branch. Catching conflicts early, on my machine, is a lot less stressful than catching them mid-PR.
+
+## 4. Lint
+
+Run ESLint. Cheap to run, catches the dumb stuff before a reviewer has to.
+
+## 5. Build
+
+Build the application. If it doesn't build locally, it's not going out.
+
+## 6. Run and dev-test locally
+
+Actually run the app and click through the change. Automated checks don't catch everything; using the feature like a user does still finds things.
+
+## 7. Check the Docker image
+
+Build the image locally with Colima and make sure it comes up clean. No point discovering an image-build issue in CI when it's cheap to catch locally.
+
+## 8. Tests
+
+Run the existing test suite, and write or update tests for whatever I just built.
+
+## 9. Copilot review
+
+Run \`/review\` on the branch before opening the PR. It's not a replacement for a human reviewer, but it catches a decent chunk of issues before anyone else has to spend time on them.
+
+## 10. Open the PR, get a senior to look
+
+Self-review the diff one more time, then open the PR and get someone senior to weigh in.
+
+## 11. Resolve comments
+
+Address feedback, push updates.
+
+## 12. UAT
+
+Test the change on UAT before it goes anywhere near production.
+
+## 13. Merge
+
+Only after all of the above.
+
+## Why bother with all this?
+
+It clears the actionables off a branch one at a time instead of leaving them all until the end, keeps the codebase clean, and meaningfully cuts down the odds of pushing something that breaks. It's a long routine on paper, but in practice most steps take minutes, and the alternative is debugging in production.
+        `.trim(),
+    },
+    {
         slug: "how-pnpm-saved-my-drive",
         title: "How pnpm saved my drive",
         date: "2026-07-12",

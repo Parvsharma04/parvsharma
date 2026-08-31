@@ -1,4 +1,5 @@
 import Header from "@/components/Header";
+import About from "@/components/About";
 import Education from "@/components/Education";
 import Experience from "@/components/Experience";
 import Achievements from "@/components/Achievements";
@@ -12,6 +13,8 @@ export default function Portfolio() {
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "3rem 1.5rem" }}>
       <Header />
       <main>
+        <About />
+        <hr />
         <Education />
         <hr />
         <Experience />
