@@ -24,6 +24,14 @@ const projects = [
       "Decentralized platform for client reviews and secure crypto micropayments. Dockerized with efficient CI/CD pipelines.",
   },
   {
+    name: "sys-d",
+    url: "https://sys.parvsharma.in",
+    github: "https://github.com/Parvsharma04/primitive-concepts",
+    tags: ["Algorithms", "Visualization", "Low-level"],
+    description:
+      "A low-level implementation of some algorithms and a visualizer for them.",
+  },
+  {
     name: "CodeEasy",
     url: "https://code-easy.vercel.app",
     github: "https://github.com/Parvsharma04/code-easy",
