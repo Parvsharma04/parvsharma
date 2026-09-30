@@ -1,15 +1,15 @@
 import Footer from "@/components/Footer";
 import Header from "@/components/Header";
-import { HobbiesSection } from "@/components/co-curricular/HobbiesSection";
-import { MiscSection } from "@/components/co-curricular/MiscSection";
-import { Section } from "@/components/co-curricular/Section";
+import { HobbiesSection } from "@/components/beyond/HobbiesSection";
+import { MiscSection } from "@/components/beyond/MiscSection";
+import { Section } from "@/components/beyond/Section";
 
-export default function CoCurricularPage() {
+export default function BeyondPage() {
   return (
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "3rem 1.5rem" }}>
       <Header />
       <main>
-        <p className="section-label">co-curriculars</p>
+        <p className="section-label">beyond</p>
         <p className="dim" style={{ fontSize: "0.83rem", marginBottom: "1.5rem" }}>
           Things I do, explore, and run when I&apos;m not writing code.
         </p>

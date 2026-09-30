@@ -28,7 +28,7 @@ export default function Header() {
       <nav style={{ fontSize: "0.8rem", display: "flex", gap: "1rem" }}>
         <Link href="/" className="nav-link">~/home</Link>
         <Link href="/blog" className="nav-link">~/blog</Link>
-        <Link href="/co-curricular" className="nav-link">~/co-curriculars</Link>
+        <Link href="/beyond" className="nav-link">~/beyond</Link>
       </nav>
 
       <hr />
