@@ -3,13 +3,43 @@ import Header from "@/components/Header";
 import { HobbiesSection } from "@/components/beyond/HobbiesSection";
 import { MiscSection } from "@/components/beyond/MiscSection";
 import { Section } from "@/components/beyond/Section";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Co-Curriculars",
+  description:
+    "Things Parv Sharma does, explores, and runs when not writing code — marathon running, trekking, guitar, bowling, and more.",
+  openGraph: {
+    title: "Co-Curriculars | Parv Sharma",
+    description:
+      "Things Parv Sharma does, explores, and runs when not writing code — marathon running, trekking, guitar, bowling, and more.",
+    url: "https://parvsharma.com/co-curricular",
+    type: "website",
+    images: [
+      {
+        url: "https://parvsharma.com/p.png",
+        width: 800,
+        height: 800,
+        alt: "Parv Sharma — Software Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Co-Curriculars | Parv Sharma",
+    description:
+      "Things Parv Sharma does, explores, and runs when not writing code — marathon running, trekking, guitar, bowling, and more.",
+    creator: "@parvsharma04",
+    images: ["https://parvsharma.com/p.png"],
+  },
+};
 
 export default function BeyondPage() {
   return (
     <div style={{ maxWidth: "700px", margin: "0 auto", padding: "3rem 1.5rem" }}>
       <Header />
       <main>
-        <p className="section-label">beyond</p>
+        <p className="section-label">co-curriculars</p>
         <p className="dim" style={{ fontSize: "0.83rem", marginBottom: "1.5rem" }}>
           Things I do, explore, and run when I&apos;m not writing code.
         </p>

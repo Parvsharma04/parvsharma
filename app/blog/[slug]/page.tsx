@@ -2,6 +2,7 @@ import { posts, getPostBySlug } from "@/lib/posts";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Link from "next/link";
+import Script from "next/script";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -19,13 +20,23 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             title: `${post.title} — Parv Sharma`,
             description: post.excerpt || "Engineering, systems, and thoughts by Parv Sharma",
             type: "article",
-            url: `https://parvsharma.in/blog/${slug}`,
+            url: `https://parvsharma.com/blog/${slug}`,
             publishedTime: post.date,
+            images: [
+                {
+                    url: "https://parvsharma.com/p.png",
+                    width: 800,
+                    height: 800,
+                    alt: `${post.title} �� Parv Sharma`,
+                },
+            ],
         },
         twitter: {
             card: "summary_large_image",
             title: `${post.title} — Parv Sharma`,
             description: post.excerpt || "Engineering, systems, and thoughts by Parv Sharma",
+            creator: "@parvsharma04",
+            images: ["https://parvsharma.com/p.png"],
         }
     };
 }
@@ -61,6 +72,15 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             continue;
         }
 
+        if (line.startsWith("# ")) {
+            contentNodes.push(
+                <h1 key={`h1-${i}`} style={{ fontWeight: "bold", fontSize: "1.1rem", marginBottom: "2rem", color: "#f0f0f0" }}>
+                    {line.slice(2)}
+                </h1>
+            );
+            continue;
+        }
+
         if (line.startsWith("## ")) {
             contentNodes.push(
                 <h2 key={`h2-${i}`} style={{ fontWeight: "bold", color: "#00ff88", marginTop: "1.8rem", marginBottom: "0.6rem", fontSize: "0.82rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>
@@ -92,8 +112,28 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
         );
     }
 
+    const blogPostingSchema = {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        headline: post.title,
+        description: post.excerpt || "Engineering, systems, and thoughts by Parv Sharma",
+        datePublished: post.date,
+        author: {
+            "@type": "Person",
+            name: "Parv Sharma",
+            url: "https://parvsharma.com",
+        },
+        url: `https://parvsharma.com/blog/${slug}`,
+        image: "https://parvsharma.com/p.png",
+    };
+
     return (
         <div style={{ maxWidth: "700px", margin: "0 auto", padding: "3rem 1.5rem" }}>
+            <Script
+                id={`blog-schema-${slug}`}
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingSchema) }}
+            />
             <Header />
             <main>
                 <p className="muted" style={{ fontSize: "0.72rem", marginBottom: "0.35rem" }}>
