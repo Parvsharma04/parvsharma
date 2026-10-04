@@ -10,13 +10,23 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Blog | Parv Sharma",
     description: "Notes on engineering, systems, and things I've been thinking about.",
-    url: "https://parvsharma.in/blog",
+    url: "https://parvsharma.com/blog",
     type: "website",
+    images: [
+      {
+        url: "https://parvsharma.com/p.png",
+        width: 800,
+        height: 800,
+        alt: "Parv Sharma — Software Developer",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Blog | Parv Sharma",
     description: "Notes on engineering, systems, and things I've been thinking about.",
+    creator: "@parvsharma04",
+    images: ["https://parvsharma.com/p.png"],
   },
 };
 
@@ -29,7 +39,7 @@ export default function BlogPage() {
         <div style={{ maxWidth: "700px", margin: "0 auto", padding: "3rem 1.5rem" }}>
             <Header />
             <main>
-                <p className="section-label">blog</p>
+                <h1 className="section-label">blog</h1>
                 <p className="dim" style={{ fontSize: "0.83rem", marginBottom: "1.8rem" }}>
                     Notes on engineering, systems, and things I&apos;ve been thinking about.
                 </p>

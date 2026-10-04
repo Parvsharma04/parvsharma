@@ -17,7 +17,7 @@ export default function Header() {
         <span style={{ color: "#2a2a2a", margin: "0 0.4rem" }}>·</span>
         <a href="tel:+916280730669">+91 62807 30669</a>
         <span style={{ color: "#2a2a2a", margin: "0 0.4rem" }}>·</span>
-        <a href="https://parvsharma.in" target="_blank" rel="noopener noreferrer">parvsharma.in</a>
+        <a href="https://parvsharma.com" target="_blank" rel="noopener noreferrer">parvsharma.com</a>
         <span style={{ color: "#2a2a2a", margin: "0 0.4rem" }}>·</span>
         <a href="https://linkedin.com/in/parvsharma04" target="_blank" rel="noopener noreferrer">linkedin</a>
         <span style={{ color: "#2a2a2a", margin: "0 0.4rem" }}>·</span>

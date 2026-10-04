@@ -84,10 +84,10 @@ export default function Projects() {
           <div key={i} className="mb-5">
             <div className="flex flex-wrap items-baseline gap-2">
               <span className="text-gray-100 font-bold">{p.name}</span>
-              <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-sm text-green-400 hover:underline">
+              <a href={p.url} target="_blank" rel="noopener noreferrer" className="text-sm text-green-400 hover:underline" aria-label={`${p.name} — live demo`}>
                 [live]
               </a>
-              <a href={p.github} target="_blank" rel="noopener noreferrer" className="text-sm text-green-400 hover:underline">
+              <a href={p.github} target="_blank" rel="noopener noreferrer" className="text-sm text-green-400 hover:underline" aria-label={`${p.name} — GitHub repository`}>
                 [github]
               </a>
             </div>
