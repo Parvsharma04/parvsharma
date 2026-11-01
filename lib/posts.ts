@@ -8,6 +8,30 @@ export interface Post {
 
 export const posts: Post[] = [
     {
+        slug: "i-despise-linkedin",
+        title: "I Despise LinkedIn",
+        date: "2026-11-01",
+        excerpt:
+            "Influencers, fake news, ghost jobs, and AI slop.",
+        content: `
+LinkedIn was supposed to be a professional networking space but it has lost it's sense of professionalism.
+
+## Problems
+
+- memes
+- influencers
+- spam job postings
+- spam media reports
+- political posts
+- religious posts
+- AI slop
+- endless ad placements
+- feed suggestions that also bubbles up AI slop
+
+I open it everyday to see what's happening, then close it after one scroll because it has become unbearable.
+        `.trim(),
+    },
+    {
         slug: "my-pr-ritual",
         title: "My PR Ritual",
         date: "2026-08-31",
