@@ -95,8 +95,8 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
             continue;
         }
 
-        // Inline code and bold handling
-        const parts = line.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
+        // Inline code, bold, and link handling
+        const parts = line.split(/(`[^`]+`|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g);
         contentNodes.push(
             <p key={`p-${i}`}>
                 {parts.map((part, j) => {
@@ -105,6 +105,22 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
                     }
                     if (part.startsWith("`") && part.endsWith("`")) {
                         return <code key={j} style={{ color: "#00ff88", fontSize: "0.85em" }}>{part.slice(1, -1)}</code>;
+                    }
+                    if (part.startsWith("[") && part.includes("](") && part.endsWith(")")) {
+                        const mid = part.indexOf("](");
+                        const label = part.slice(1, mid);
+                        const href = part.slice(mid + 2, -1);
+                        return (
+                            <a
+                                key={j}
+                                href={href}
+                                target={href.startsWith("http") ? "_blank" : undefined}
+                                rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                                style={{ color: "#00ff88", textDecoration: "underline" }}
+                            >
+                                {label}
+                            </a>
+                        );
                     }
                     return part;
                 })}
