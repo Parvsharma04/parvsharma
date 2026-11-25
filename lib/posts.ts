@@ -8,6 +8,128 @@ export interface Post {
 
 export const posts: Post[] = [
     {
+        slug: "processes-threads-and-database-connections",
+        title: "Processes, Threads, and How Postgres and MySQL Handle Connections",
+        date: "2026-11-25",
+        excerpt:
+            "Why Postgres forks a whole OS process per connection, why MySQL uses threads, what happens when hundreds of pods hammer them, and why connection pooling is basically mandatory.",
+        content: `
+At the end of my [year-one retrospective](/blog/year-one-backend-dev), I wrote that I wanted to stop taking databases for granted. I had spent months writing dynamic queries for ClickHouse, wiring microservices across Kubernetes pods, and tossing connection strings into environment variables. But when it came to relational databases like Postgres and MySQL, they still felt a bit like magical black boxes: you open a TCP connection, fire a query, and data comes back.
+
+Then last week, I was reading [PlanetScale's post on processes and threads](https://planetscale.com/blog/processes-and-threads) by Ben Dicken. It is one of those articles that makes you stop, stare at your terminal, and think: wait, that is what is actually happening under the hood?
+
+Why does PostgreSQL spin up an entire OS process for every single connection? Why does MySQL prefer threads? And what actually happens inside the server's CPU and memory when 2,000 microservice pods suddenly try to talk to them all at once?
+
+Here is what I learned, broken down without the textbook snooze-fest.
+
+## The ground floor: Process vs. Thread
+
+Before touching databases, you have to peel back the OS layer. Your computer fundamentally has a CPU with execution cores, RAM, and an operating system kernel acting as traffic control.
+
+When you run code, the OS wraps it in one of two abstractions:
+
+**A Process** is an isolated, independent workspace. It gets its own virtual memory address space (its own page tables), open file descriptors, registers, and execution stack. The OS enforces a strict wall around it: Process A cannot touch Process B's memory without explicit IPC (Inter-Process Communication) like shared memory segments or sockets.
+
+To create a process in Linux, the OS calls \`fork()\`. While modern kernels use Copy-on-Write (COW) so memory isn't instantly duplicated bit-for-bit, \`fork()\` is still a heavyweight operation. The kernel has to allocate page tables, copy descriptors, and track process state.
+
+Even worse is switching between two processes (a process context switch). When the CPU stops running Process A to run Process B, it has to save registers, transition to kernel mode, swap memory page tables, and invalidate the CPU's Translation Lookaside Buffer (TLB). That takes around ~5 microseconds. It sounds fast until you realize a CPU could have executed tens of thousands of instructions in that window.
+
+**A Thread** is an execution context *inside* a process. A single process can have dozens or hundreds of threads.
+
+The crucial difference: all threads inside a process share the same virtual address space, the same heap, the same global memory, and the same open files. Each thread only gets its own register state and call stack.
+
+Spawning a thread via \`pthread_create()\` (which wraps Linux's \`clone()\` syscall with \`CLONE_VM\` and \`CLONE_FILES\`) is significantly lighter. And switching between threads inside the same process takes around ~1 microsecond—roughly 4 to 5 times faster than switching processes. Why? Because the virtual memory address space doesn't change. The CPU doesn't have to flush the TLB or reload page tables. It just swaps registers and points the instruction pointer somewhere else in the same memory pool.
+
+## PostgreSQL: The Process-per-connection model
+
+Here is where it gets interesting for databases.
+
+PostgreSQL is built around a **process-per-connection** architecture.
+
+When Postgres boots up, it runs a master supervisor process called \`postmaster\`.
+
+Every single time your application opens a new connection to Postgres, \`postmaster\` calls \`fork()\` and creates a brand new, dedicated child backend process. If you SSH into a server running Postgres and type \`ps aux | grep postgres\`, you will see a list of separate OS processes for each client: \`postgres: app_user main_db 10.0.1.12(54321) idle\`.
+
+Why on earth would Postgres do this instead of using threads?
+
+It goes back to the late 1980s and early 1990s at UC Berkeley when POSTGRES was created. Back then, thread implementations across Unix variants were notoriously inconsistent, buggy, or non-existent. Processes were rock solid.
+
+More importantly: **fault isolation**. If a connection runs a buggy query, triggers a segmentation fault in a custom C extension, or leaks memory, only that specific child process crashes. The \`postmaster\` process detects the death, cleans up shared memory, and the rest of the database continues running undisturbed. One rogue query cannot corrupt the memory space of another client.
+
+The tradeoff? Spawning an OS process takes real time, and each process needs dedicated memory (stack, per-connection buffers like \`work_mem\`, connection metadata). Even an idle Postgres connection can tie up 5MB to 10MB+ of RAM just sitting there doing nothing.
+
+## MySQL: The Thread-per-connection model
+
+MySQL took the other fork in the road.
+
+MySQL runs as a single unified process daemon: \`mysqld\`.
+
+Instead of forking a child process for every client, MySQL creates a new POSIX thread per connection (or pulls an idle thread from its internal thread cache).
+
+Because all client connections are just threads within the single \`mysqld\` process:
+- They all share the same address space.
+- They share the global InnoDB buffer pool (\`innodb_buffer_pool_size\`), table caches, and lock tables directly.
+- Spawning a thread is much cheaper than \`fork()\`, and context switching between threads incurs less overhead.
+- Memory overhead per idle connection is substantially lower.
+
+The catch? Lack of memory isolation. Because everything runs in one address space, if a thread causes fatal memory corruption or crashes the process, the entire \`mysqld\` daemon goes down, taking all client connections with it.
+
+## The breaking point: Massive connection surges
+
+When you are developing locally or running a small monolith with 20 connections, both models feel instantaneous. You won't notice a difference.
+
+The cracks appear when you work in modern cloud architectures. Think about what happens when you have 15 microservices running across a Kubernetes cluster, each autoscaling to 20 or 50 pods (something I've seen firsthand with HPAs scaling during peak traffic). Or worse, a burst of serverless functions (like AWS Lambda) spinning up 2,000 concurrent instances.
+
+If each pod or lambda opens 10 to 20 connections directly to the database, you suddenly have 3,000 to 10,000 simultaneous connections.
+
+Here is what happens under the hood:
+
+**In Postgres:**
+- 5,000 connections = 5,000 separate Linux processes.
+- **Memory explosion:** 5,000 processes × 10MB per connection = 50 GB of RAM gone *just holding idle connection state*. That is memory stolen directly from the OS page cache and Postgres shared buffers, where your actual table data should be cached.
+- **The fork storm:** Rapidly opening and closing connections means the server is hammered with constant \`fork()\` system calls, burning CPU cycles on process setup instead of querying data.
+- **Context switching death spiral:** A standard database server might have 16 or 32 physical CPU cores. Trying to juggle thousands of active processes across 16 cores means the Linux scheduler is constantly interrupting processes to switch contexts. The CPU spends a huge percentage of its clock cycles saving registers, flushing TLBs, and swapping page tables. Throughput plummets, latency skyrockets, and the server appears frozen despite high CPU utilization.
+
+**In MySQL:**
+- MySQL fares better with connection establishment because creating threads is lighter than forking processes.
+- But it is not a silver bullet. 5,000 threads will still overwhelm the OS scheduler and lead to massive mutex contention inside InnoDB's internal lock structures. Threads still need stack space and per-thread memory buffers.
+
+**The physical reality:**
+No matter which database you use, the hardware has a hard physical limit. If your server has 16 CPU cores, it can only execute 16 instructions in parallel at any given instant. Trying to make 2,000 queries run simultaneously doesn't make things faster; it makes every query 100x slower while waiting in scheduler queues.
+
+## Enter Connection Pooling
+
+This is where connection pooling steps in to rescue the database.
+
+Instead of allowing hundreds of application pods or lambdas to connect straight to the database engine, a connection pooler sits in the middle as an intelligent gatekeeper.
+
+Tools like **PgBouncer** (for Postgres) or application-level poolers (like HikariCP or internal connection pools in Node/Go) solve this problem with a simple concept: **multiplexing**.
+
+Here is how it works:
+- Thousands of application clients connect to the pooler. The pooler is designed to hold thousands of cheap, lightweight network sockets open with minimal overhead.
+- The pooler maintains a small, fixed pool of actual connections to the database—usually between 20 and 50 connections, carefully tuned to match the database server's CPU core count and I/O capacity.
+- The pooler routes incoming queries across those few persistent database connections.
+
+In PgBouncer, the secret sauce is **transaction pooling**. Instead of locking a database connection to an app for its entire lifetime (session pooling), PgBouncer assigns a database connection to a client *only for the exact duration of an active transaction*.
+
+The millisecond the query finishes and issues \`COMMIT\`, PgBouncer snatches that database connection back and immediately hands it to another waiting client. To the application, it looks like it had a dedicated database connection. To Postgres, it only ever has to manage 30 running backend processes.
+
+By capping the connection count at 30 or 50, the OS stops thrashing. Context switches drop. Memory stays free for the buffer cache. The CPU cores stay pegged on actual query work. Counter-intuitively, bottlenecking incoming connections through a small pool often makes your database run 2x to 5x *faster* under heavy load than letting everyone connect at once.
+
+## What clicked for me
+
+Reading about this on PlanetScale made me realize how easy it is as backend developers to live in application-land and forget the machine.
+
+We configure pool sizes and max connection limits in our YAML files or ORMs, but behind those numbers are physical CPU cores, page tables, cache lines, and system calls like \`fork()\` and \`clone()\`.
+
+Postgres chose bulletproof process isolation, accepting higher memory and context-switching overhead that practically mandates a tool like PgBouncer in production. MySQL chose the speed and efficiency of shared-memory threads, accepting the risk of shared-process crashes.
+
+Neither choice is wrong—they are just two different engineering tradeoffs made decades ago that still shape how we build and scale backend systems today.
+
+If you haven't read Ben Dicken's post on PlanetScale yet, go check out [Processes and Threads](https://planetscale.com/blog/processes-and-threads). It is rare to find an article that bridges low-level OS mechanics and high-level database architecture so clearly.
+        `.trim(),
+    },
+    {
         slug: "i-despise-linkedin",
         title: "I Despise LinkedIn",
         date: "2026-11-01",
